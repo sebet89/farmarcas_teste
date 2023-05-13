@@ -222,4 +222,40 @@ class ActivityController extends Controller
     {
         return $this->activityService->deleteActivity($id);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/activities/filter",
+     *     tags={"Activities"},
+     *     summary="Filtra atividades por range de datas",
+     *     description="Retorna uma lista de atividades que se enquadram no range de datas fornecido",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="start_date",
+     *         in="query",
+     *         description="Data de início do filtro",
+     *         required=true,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
+     *         name="end_date",
+     *         in="query",
+     *         description="Data de término do filtro",
+     *         required=true,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Operação bem-sucedida",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/Activity"))
+     *     )
+     * )
+     */
+    public function filterByDate(Request $request)
+    {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        return $this->activityService->getActivitiesBetweenDates($startDate, $endDate);
+    }
 }

@@ -206,6 +206,58 @@
                 ]
             }
         },
+        "/api/activities/filter": {
+            "get": {
+                "tags": [
+                    "Activities"
+                ],
+                "summary": "Filtra atividades por range de datas",
+                "description": "Retorna uma lista de atividades que se enquadram no range de datas fornecido",
+                "operationId": "871f2e5f8ec1c3e574ac7228fe1f5a36",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "Data de início do filtro",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "Data de término do filtro",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operação bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Activity"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/activity_types": {
             "get": {
                 "tags": [

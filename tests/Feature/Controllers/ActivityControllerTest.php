@@ -26,8 +26,9 @@ class ActivityControllerTest extends TestCase
             'title' => $this->faker->sentence,
             'user_id' => $user->id,
             'description' => $this->faker->paragraph,
-            'start_date' => Carbon::now()->toDateTimeString(),
-            'due_date' => Carbon::now()->addDays(2)->toDateTimeString(),
+            'start_date' => "2023-09-18",
+            'due_date' => "2023-09-21",
+            'end_date' => "2023-09-22",
             'status' => 'open',
             'activity_type_id' => $activityType->id,
         ];
@@ -50,8 +51,9 @@ class ActivityControllerTest extends TestCase
         $activityData = [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'start_date' => Carbon::now()->toDateTimeString(),
-            'due_date' => Carbon::now()->addDays(2)->toDateTimeString(),
+            'start_date' => "2023-09-18",
+            'due_date' => "2023-09-21",
+            'end_date' => "2023-09-22",
             'status' => 'completed',
         ];
 
@@ -76,5 +78,23 @@ class ActivityControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('activities', ['id' => $activity->id]);
+    }
+
+    public function test_user_can_get_activities_between_dates()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'api');
+        
+        $activity = Activity::factory()->create(['user_id' => $user->id]);
+
+        $startDate = Carbon::now()->toDateTimeString();
+        $endDate = Carbon::now()->addDays(2)->toDateTimeString();
+
+        Sanctum::actingAs($user, ['*']);
+
+        $response = $this->getJson("/api/activities?start_date={$startDate}&end_date={$endDate}");
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1);
     }
 }

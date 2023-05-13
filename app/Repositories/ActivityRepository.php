@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Activity;
 use App\Interfaces\ActivityRepositoryInterface;
+use DateTime;
 
 class ActivityRepository implements ActivityRepositoryInterface
 {
@@ -39,5 +40,17 @@ class ActivityRepository implements ActivityRepositoryInterface
     public function delete($id)
     {
         return $this->model->find($id)->delete();
+    }
+
+    public function getActivitiesBetweenDates(DateTime $start, DateTime $end, $excludeId = null)
+    {
+        $query = $this->model->whereBetween('start_date', [$start, $end])
+                         ->orWhereBetween('due_date', [$start, $end]);
+
+        if ($excludeId) {
+            $query = $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->get();
     }
 }

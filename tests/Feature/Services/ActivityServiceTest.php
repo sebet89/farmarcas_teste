@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use App\Services\ActivityService;
 use App\Interfaces\ActivityRepositoryInterface;
 use App\Models\Activity;
+use DateTime;
 
 class ActivityServiceTest extends TestCase
 {
@@ -25,8 +26,14 @@ class ActivityServiceTest extends TestCase
     public function test_can_create_activity()
     {
         $this->mockActivityRepo->method('create')->willReturn(new Activity());
+        $this->mockActivityRepo->method('getActivitiesBetweenDates')->willReturn(collect());
 
-        $activity = $this->activityService->createActivity([]);
+        $activityData = [
+            'start_date' => '2023-05-16',
+            'end_date' => '2023-05-18',
+        ];
+
+        $activity = $this->activityService->createActivity($activityData);
 
         $this->assertInstanceOf(Activity::class, $activity);
     }
@@ -37,7 +44,14 @@ class ActivityServiceTest extends TestCase
             ->method('update')
             ->willReturn($this->activity);
 
-        $activity = $this->activityService->updateActivity([], 1);
+            $this->mockActivityRepo->method('getActivitiesBetweenDates')->willReturn(collect());
+
+        $activityData = [
+            'start_date' => '2023-05-16',
+            'end_date' => '2023-05-18',
+        ];
+
+        $activity = $this->activityService->updateActivity($activityData, 1);
 
         $this->assertSame($this->activity, $activity);
     }
@@ -58,5 +72,21 @@ class ActivityServiceTest extends TestCase
         $activity = $this->activityService->getActivityById(1);
 
         $this->assertInstanceOf(Activity::class, $activity);
+    }
+
+    public function test_can_get_activities_between_dates()
+    {
+        $startDate = new DateTime('2023-05-16');
+        $endDate = new DateTime('2023-05-18');
+
+        $this->mockActivityRepo->expects($this->once())
+            ->method('getActivitiesBetweenDates')
+            ->with($startDate, $endDate)
+            ->willReturn([$this->activity]);
+
+        $activities = $this->activityService->getActivitiesBetweenDates($startDate, $endDate);
+
+        $this->assertCount(1, $activities);
+        $this->assertSame($this->activity, $activities[0]);
     }
 }

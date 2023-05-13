@@ -22,6 +22,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::resource('activities', ActivityController::class);
     Route::resource('activity_types', ActivityTypeController::class);
 
+    Route::get('activities/filter', [ActivityController::class, 'filterByDate']);
+
     // Rota de logout
     Route::post('logout', [AuthController::class, 'logout']);
 });

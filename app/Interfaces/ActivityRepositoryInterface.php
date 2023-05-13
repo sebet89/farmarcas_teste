@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Interfaces;
+use DateTime;
 
 interface ActivityRepositoryInterface
 {
@@ -13,4 +14,6 @@ interface ActivityRepositoryInterface
     public function update(array $data, $id);
 
     public function delete($id);
+
+    public function getActivitiesBetweenDates(DateTime $start, DateTime $end);
 }
